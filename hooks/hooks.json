@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/index.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/bundle.js",
             "timeout": 10
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/index.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/bundle.js",
             "timeout": 5
           }
         ]
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/index.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/bundle.js",
             "timeout": 60
           }
         ]
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/index.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/cli/bundle.js",
             "timeout": 5
           }
         ]
