@@ -6,14 +6,17 @@ export declare const JudgeConfigSchema: z.ZodObject<{
     model: z.ZodDefault<z.ZodEnum<["opus", "sonnet", "haiku"]>>;
     timeout: z.ZodDefault<z.ZodNumber>;
     maxTokens: z.ZodDefault<z.ZodNumber>;
+    executable: z.ZodDefault<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     model: "opus" | "sonnet" | "haiku";
     timeout: number;
     maxTokens: number;
+    executable: string;
 }, {
     model?: "opus" | "sonnet" | "haiku" | undefined;
     timeout?: number | undefined;
     maxTokens?: number | undefined;
+    executable?: string | undefined;
 }>;
 export type JudgeConfig = z.infer<typeof JudgeConfigSchema>;
 /**
@@ -106,14 +109,17 @@ export declare const RealityCheckConfigSchema: z.ZodObject<{
         model: z.ZodDefault<z.ZodEnum<["opus", "sonnet", "haiku"]>>;
         timeout: z.ZodDefault<z.ZodNumber>;
         maxTokens: z.ZodDefault<z.ZodNumber>;
+        executable: z.ZodDefault<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
         model: "opus" | "sonnet" | "haiku";
         timeout: number;
         maxTokens: number;
+        executable: string;
     }, {
         model?: "opus" | "sonnet" | "haiku" | undefined;
         timeout?: number | undefined;
         maxTokens?: number | undefined;
+        executable?: string | undefined;
     }>>;
     limits: z.ZodDefault<z.ZodObject<{
         maxConsecutiveFailures: z.ZodDefault<z.ZodNumber>;
@@ -187,6 +193,7 @@ export declare const RealityCheckConfigSchema: z.ZodObject<{
         model: "opus" | "sonnet" | "haiku";
         timeout: number;
         maxTokens: number;
+        executable: string;
     };
     limits: {
         maxConsecutiveFailures: number;
@@ -217,6 +224,7 @@ export declare const RealityCheckConfigSchema: z.ZodObject<{
         model?: "opus" | "sonnet" | "haiku" | undefined;
         timeout?: number | undefined;
         maxTokens?: number | undefined;
+        executable?: string | undefined;
     } | undefined;
     limits?: {
         maxConsecutiveFailures?: number | undefined;

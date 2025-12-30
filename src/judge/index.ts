@@ -234,13 +234,14 @@ interface ClaudeSubprocessOptions {
   jsonSchema: string;
   timeout: number;
   projectDir: string;
+  executable: string;
 }
 
 /**
  * Run the Claude CLI as a subprocess and return the parsed response
  */
 async function runClaudeSubprocess(options: ClaudeSubprocessOptions): Promise<unknown> {
-  const { prompt, systemPrompt, model, jsonSchema, timeout, projectDir } = options;
+  const { prompt, systemPrompt, model, jsonSchema, timeout, projectDir, executable } = options;
 
   const args = [
     '-p',                          // Print mode (non-interactive)
@@ -255,7 +256,7 @@ async function runClaudeSubprocess(options: ClaudeSubprocessOptions): Promise<un
   ];
 
   return new Promise((resolve, reject) => {
-    const child = spawn('hclaude', args, {
+    const child = spawn(executable, args, {
       cwd: projectDir,
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout,
@@ -367,6 +368,9 @@ export async function runJudge(input: JudgeInput): Promise<JudgeVerdict> {
     // Get the model ID
     const model = getModelId(config.judge.model);
 
+    // Get executable: env var takes priority, then config, then default 'claude'
+    const executable = process.env.REALITYCHECK_CLAUDE_EXECUTABLE || config.judge.executable;
+
     // Create JSON schema string for structured output
     const jsonSchema = JSON.stringify({
       type: 'object',
@@ -390,6 +394,7 @@ export async function runJudge(input: JudgeInput): Promise<JudgeVerdict> {
       jsonSchema,
       timeout: config.judge.timeout,
       projectDir,
+      executable,
     });
 
     // Validate and parse the response

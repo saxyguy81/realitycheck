@@ -190,7 +190,7 @@ export function buildJudgePrompt(directives, diff, lastMessage, stopAttempts, fi
  * Run the Claude CLI as a subprocess and return the parsed response
  */
 async function runClaudeSubprocess(options) {
-    const { prompt, systemPrompt, model, jsonSchema, timeout, projectDir } = options;
+    const { prompt, systemPrompt, model, jsonSchema, timeout, projectDir, executable } = options;
     const args = [
         '-p', // Print mode (non-interactive)
         '--tools', '', // Disable tools (evaluation only)
@@ -203,7 +203,7 @@ async function runClaudeSubprocess(options) {
         prompt, // The evaluation prompt
     ];
     return new Promise((resolve, reject) => {
-        const child = spawn('hclaude', args, {
+        const child = spawn(executable, args, {
             cwd: projectDir,
             stdio: ['pipe', 'pipe', 'pipe'],
             timeout,
@@ -303,6 +303,8 @@ export async function runJudge(input) {
         const prompt = buildJudgePrompt(directives, diff, lastMessage, stopAttempts, fingerprint);
         // Get the model ID
         const model = getModelId(config.judge.model);
+        // Get executable: env var takes priority, then config, then default 'claude'
+        const executable = process.env.REALITYCHECK_CLAUDE_EXECUTABLE || config.judge.executable;
         // Create JSON schema string for structured output
         const jsonSchema = JSON.stringify({
             type: 'object',
@@ -325,6 +327,7 @@ export async function runJudge(input) {
             jsonSchema,
             timeout: config.judge.timeout,
             projectDir,
+            executable,
         });
         // Validate and parse the response
         const parseResult = JudgeVerdictSchema.safeParse(rawResponse);

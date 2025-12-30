@@ -4052,7 +4052,8 @@ import { join } from "node:path";
 var JudgeConfigSchema = external_exports.object({
   model: external_exports.enum(["opus", "sonnet", "haiku"]).default("opus"),
   timeout: external_exports.number().min(5e3).max(12e4).default(3e4),
-  maxTokens: external_exports.number().min(1e3).max(16e3).default(4096)
+  maxTokens: external_exports.number().min(1e3).max(16e3).default(4096),
+  executable: external_exports.string().default("claude")
 });
 var LimitsConfigSchema = external_exports.object({
   maxConsecutiveFailures: external_exports.number().min(1).max(100).default(20),
@@ -5253,7 +5254,7 @@ function buildJudgePrompt(directives, diff, lastMessage, stopAttempts, fingerpri
   return sections.join("\n");
 }
 async function runClaudeSubprocess(options) {
-  const { prompt, systemPrompt, model, jsonSchema, timeout, projectDir } = options;
+  const { prompt, systemPrompt, model, jsonSchema, timeout, projectDir, executable } = options;
   const args = [
     "-p",
     // Print mode (non-interactive)
@@ -5282,7 +5283,7 @@ async function runClaudeSubprocess(options) {
     // The evaluation prompt
   ];
   return new Promise((resolve2, reject) => {
-    const child = spawn("hclaude", args, {
+    const child = spawn(executable, args, {
       cwd: projectDir,
       stdio: ["pipe", "pipe", "pipe"],
       timeout
@@ -5356,6 +5357,7 @@ async function runJudge(input) {
   try {
     const prompt = buildJudgePrompt(directives, diff, lastMessage, stopAttempts, fingerprint);
     const model = getModelId(config.judge.model);
+    const executable = process.env.REALITYCHECK_CLAUDE_EXECUTABLE || config.judge.executable;
     const jsonSchema = JSON.stringify({
       type: "object",
       properties: {
@@ -5375,7 +5377,8 @@ async function runJudge(input) {
       model,
       jsonSchema,
       timeout: config.judge.timeout,
-      projectDir
+      projectDir,
+      executable
     });
     const parseResult = JudgeVerdictSchema.safeParse(rawResponse);
     if (!parseResult.success) {

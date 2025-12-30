@@ -13,6 +13,7 @@ export const JudgeConfigSchema = z.object({
   model: z.enum(['opus', 'sonnet', 'haiku']).default('opus'),
   timeout: z.number().min(5000).max(120000).default(30000),
   maxTokens: z.number().min(1000).max(16000).default(4096),
+  executable: z.string().default('claude'),
 });
 
 export type JudgeConfig = z.infer<typeof JudgeConfigSchema>;
