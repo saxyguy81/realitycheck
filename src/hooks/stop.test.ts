@@ -117,7 +117,7 @@ describe('handleStop', () => {
 
     const result = await handleStop(createInput());
 
-    expect(result).toEqual({ decision: 'continue' });
+    expect(result).toEqual({ decision: 'approve' });
   });
 
   it('allows stop when maxConsecutiveFailures limit exceeded (default: 20)', async () => {
@@ -135,7 +135,7 @@ describe('handleStop', () => {
 
     const result = await handleStop(createInput());
 
-    expect(result).toEqual({ decision: 'continue' });
+    expect(result).toEqual({ decision: 'approve' });
   });
 
   it('allows stop when stop_hook_active is true (recursion guard)', async () => {
@@ -146,7 +146,7 @@ describe('handleStop', () => {
 
     const result = await handleStop(createInput({ stop_hook_active: true }));
 
-    expect(result).toEqual({ decision: 'continue' });
+    expect(result).toEqual({ decision: 'approve' });
   });
 
   it('calls judge when directives exist and limits not exceeded', async () => {
@@ -265,7 +265,7 @@ describe('handleStop', () => {
   it('handles invalid input gracefully (fails open)', async () => {
     const result = await handleStop({ invalid: 'data' });
 
-    expect(result).toEqual({ decision: 'continue' });
+    expect(result).toEqual({ decision: 'approve' });
   });
 
   it('blocks when stagnant after no progress threshold (default: 5)', async () => {

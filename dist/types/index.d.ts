@@ -175,15 +175,15 @@ export declare const HookInputSchema: z.ZodDiscriminatedUnion<"hook_type", [z.Zo
 export type HookInput = z.infer<typeof HookInputSchema>;
 /**
  * Decision schema for hook responses
- * - continue: Allow the action to proceed
+ * - approve: Allow the action to proceed
  * - block: Prevent the action with a message
  */
 export declare const HookDecisionSchema: z.ZodDiscriminatedUnion<"decision", [z.ZodObject<{
-    decision: z.ZodLiteral<"continue">;
+    decision: z.ZodLiteral<"approve">;
 }, "strip", z.ZodTypeAny, {
-    decision: "continue";
+    decision: "approve";
 }, {
-    decision: "continue";
+    decision: "approve";
 }>, z.ZodObject<{
     decision: z.ZodLiteral<"block">;
     reason: z.ZodString;

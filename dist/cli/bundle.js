@@ -4149,7 +4149,7 @@ var HookInputSchema = external_exports.discriminatedUnion("hook_type", [
 ]);
 var HookDecisionSchema = external_exports.discriminatedUnion("decision", [
   external_exports.object({
-    decision: external_exports.literal("continue")
+    decision: external_exports.literal("approve")
   }),
   external_exports.object({
     decision: external_exports.literal("block"),
@@ -5427,7 +5427,7 @@ async function handleStop(rawInput) {
   const parseResult = StopHookRawInputSchema.safeParse(rawInput);
   if (!parseResult.success) {
     console.error("RealityCheck: Invalid Stop input");
-    return { decision: "continue" };
+    return { decision: "approve" };
   }
   const input = parseResult.data;
   const { cwd, transcript_path, stop_hook_active } = input;
@@ -5436,7 +5436,7 @@ async function handleStop(rawInput) {
   await ledger.initialize();
   const activeDirectives = ledger.getActiveDirectives();
   if (activeDirectives.length === 0) {
-    return { decision: "continue" };
+    return { decision: "approve" };
   }
   const limitCheck = ledger.checkLimits();
   if (limitCheck.exceeded) {
@@ -5444,7 +5444,7 @@ async function handleStop(rawInput) {
       verdict: "complete",
       reason: `Limits exceeded: ${limitCheck.reason}. Allowing stop to prevent infinite loop.`
     });
-    return { decision: "continue" };
+    return { decision: "approve" };
   }
   const progressAnalysis = ledger.analyzeProgress();
   if (progressAnalysis.trend === "stagnant" && progressAnalysis.consecutiveFailures >= config.limits.noProgressThreshold) {
@@ -5458,7 +5458,7 @@ async function handleStop(rawInput) {
     };
   }
   if (stop_hook_active) {
-    return { decision: "continue" };
+    return { decision: "approve" };
   }
   const git = new GitManager(cwd);
   const currentFingerprint = git.computeFingerprint();
@@ -5484,7 +5484,7 @@ async function handleStop(rawInput) {
     for (const directive of activeDirectives) {
       await ledger.updateDirectiveStatus(directive.id, "completed");
     }
-    return { decision: "continue" };
+    return { decision: "approve" };
   }
   return {
     decision: "block",

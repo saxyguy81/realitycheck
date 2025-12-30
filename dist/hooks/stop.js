@@ -55,7 +55,7 @@ export async function handleStop(rawInput) {
     if (!parseResult.success) {
         console.error('RealityCheck: Invalid Stop input');
         // Fail open - allow stop if we can't parse input
-        return { decision: 'continue' };
+        return { decision: 'approve' };
     }
     const input = parseResult.data;
     const { cwd, transcript_path, stop_hook_active } = input;
@@ -68,7 +68,7 @@ export async function handleStop(rawInput) {
     const activeDirectives = ledger.getActiveDirectives();
     // If no directives, nothing to validate - allow stop
     if (activeDirectives.length === 0) {
-        return { decision: 'continue' };
+        return { decision: 'approve' };
     }
     // Check limits - if exceeded, allow stop with explanation
     const limitCheck = ledger.checkLimits();
@@ -77,7 +77,7 @@ export async function handleStop(rawInput) {
             verdict: 'complete',
             reason: `Limits exceeded: ${limitCheck.reason}. Allowing stop to prevent infinite loop.`,
         });
-        return { decision: 'continue' };
+        return { decision: 'approve' };
     }
     // Analyze progress - if stagnant, be more lenient
     const progressAnalysis = ledger.analyzeProgress();
@@ -95,7 +95,7 @@ export async function handleStop(rawInput) {
     if (stop_hook_active) {
         // This means the judge itself is trying to stop
         // Be more permissive to avoid infinite loops
-        return { decision: 'continue' };
+        return { decision: 'approve' };
     }
     // Gather evidence for the judge
     const git = new GitManager(cwd);
@@ -130,7 +130,7 @@ export async function handleStop(rawInput) {
         for (const directive of activeDirectives) {
             await ledger.updateDirectiveStatus(directive.id, 'completed');
         }
-        return { decision: 'continue' };
+        return { decision: 'approve' };
     }
     // Block with detailed feedback
     return {

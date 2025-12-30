@@ -205,7 +205,7 @@ describe('Hook E2E Tests', () => {
   });
 
   describe('Stop hook via CLI', () => {
-    it('returns continue when no directives', async () => {
+    it('returns approve when no directives', async () => {
       // Create empty ledger with valid UUIDs
       const ledgerDir = join(tempDir, '.claude', 'realitycheck');
       mkdirSync(ledgerDir, { recursive: true });
@@ -243,10 +243,10 @@ describe('Hook E2E Tests', () => {
       expect(result.exitCode).toBe(0);
 
       const output = JSON.parse(result.stdout);
-      expect(output.decision).toBe('continue');
+      expect(output.decision).toBe('approve');
     });
 
-    it('returns continue when limits exceeded', async () => {
+    it('returns approve when limits exceeded', async () => {
       // Create ledger with many failed attempts using valid UUIDs
       const ledgerDir = join(tempDir, '.claude', 'realitycheck');
       mkdirSync(ledgerDir, { recursive: true });
@@ -306,7 +306,7 @@ describe('Hook E2E Tests', () => {
       expect(result.exitCode).toBe(0);
 
       const output = JSON.parse(result.stdout);
-      expect(output.decision).toBe('continue');
+      expect(output.decision).toBe('approve');
     });
   });
 

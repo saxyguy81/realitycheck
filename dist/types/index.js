@@ -53,12 +53,12 @@ export const HookInputSchema = z.discriminatedUnion('hook_type', [
 // =============================================================================
 /**
  * Decision schema for hook responses
- * - continue: Allow the action to proceed
+ * - approve: Allow the action to proceed
  * - block: Prevent the action with a message
  */
 export const HookDecisionSchema = z.discriminatedUnion('decision', [
     z.object({
-        decision: z.literal('continue'),
+        decision: z.literal('approve'),
     }),
     z.object({
         decision: z.literal('block'),

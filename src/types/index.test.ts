@@ -89,8 +89,8 @@ describe('Hook Input Schemas', () => {
 });
 
 describe('Hook Decision Schema', () => {
-  it('should validate continue decision', () => {
-    const decision = { decision: 'continue' };
+  it('should validate approve decision', () => {
+    const decision = { decision: 'approve' };
     expect(() => HookDecisionSchema.parse(decision)).not.toThrow();
   });
 
