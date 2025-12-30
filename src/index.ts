@@ -15,3 +15,13 @@ export * from './config/index.js';
 
 // Ledger management
 export * from './ledger/index.js';
+
+// Git utilities
+export * from './git/index.js';
+
+// Judge system
+export * from './judge/index.js';
+
+// Utility modules
+export * from './utils/transcript.js';
+export * from './utils/slashCommands.js';

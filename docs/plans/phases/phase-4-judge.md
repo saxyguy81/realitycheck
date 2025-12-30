@@ -183,16 +183,17 @@ export * from './judge/index.js';
 ## Verification Criteria
 
 ### Automated
-- [ ] `npm run build` succeeds
-- [ ] Unit tests for prompt building pass
-- [ ] Unit tests for verdict parsing pass (mock subprocess)
+- [x] `npm run build` succeeds
+- [x] Unit tests for prompt building pass
+- [x] Unit tests for verdict parsing pass (mock subprocess)
 
-### Manual
-- [ ] Judge subprocess runs without errors (requires Claude CLI installed)
-- [ ] Judge returns valid JSON matching schema
-- [ ] Judge correctly identifies incomplete task (missing file creation)
-- [ ] Judge correctly identifies complete task
-- [ ] Timeout is respected (doesn't hang)
+### E2E Tests (No Manual Verification)
+Add to `src/tests/e2e/judge.test.ts` (mock Claude CLI subprocess):
+- [ ] Judge subprocess runner handles valid JSON response
+- [ ] Judge subprocess runner handles timeout gracefully (fail-open)
+- [ ] Judge subprocess runner handles malformed output gracefully
+- [ ] Prompt builder includes all directive types correctly
+- [ ] Verdict schema validation rejects invalid structures
 
 ## Implementation Notes
 

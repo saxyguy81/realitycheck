@@ -233,16 +233,17 @@ export * from './utils/slashCommands.js';
 ## Verification Criteria
 
 ### Automated
-- [ ] `npm run build` succeeds
-- [ ] `npm run typecheck` passes
-- [ ] Unit tests for utilities pass
-- [ ] CLI responds correctly to each hook type (mock stdin)
+- [x] `npm run build` succeeds
+- [x] `npm run typecheck` passes
+- [x] Unit tests for utilities pass
+- [x] CLI responds correctly to each hook type (mock stdin)
 
-### Manual
-- [ ] `echo '{"hook_event_name":"UserPromptSubmit","prompt":"test","session_id":"s1","transcript_path":"/tmp/t","cwd":"/tmp"}' | node dist/cli/index.js` creates ledger
+### E2E Tests (No Manual Verification)
+Add to `src/tests/e2e/hooks.test.ts`:
+- [ ] UserPromptSubmit creates ledger when given valid JSON via stdin
 - [ ] PostToolUse with Bash tool records fingerprint
 - [ ] SessionStart after clear shows preserved directives
-- [ ] Stop hook returns approve (with stub judge)
+- [ ] Stop hook returns approve (with stub/mocked judge)
 
 ## Implementation Notes
 

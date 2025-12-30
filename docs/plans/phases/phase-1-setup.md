@@ -151,10 +151,11 @@ export * from './ledger/index.js';
 - [x] `npm run typecheck` passes
 - [x] Unit tests pass: `npm test`
 
-### Manual
-- [x] Creating a LedgerManager and calling `initialize()` creates `.claude/realitycheck/task_ledger.json`
+### E2E Tests (No Manual Verification)
+All verification automated in `src/ledger/index.test.ts`:
+- [x] LedgerManager.initialize() creates task_ledger.json in temp directory
 - [x] Adding directives persists them to the JSON file
-- [x] Ledger survives process restart (load existing data)
+- [x] Ledger survives process restart (load existing data in new instance)
 
 ## Implementation Notes
 

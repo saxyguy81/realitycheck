@@ -34,14 +34,15 @@ A fully functional RealityCheck plugin that:
 6. **Performant** - Minimizes latency through caching, early exits, and parallel operations
 7. **Testable** - Comprehensive test suite using Agent SDK
 
-### Verification Criteria:
+### Verification Criteria (All Automated):
 
 - [ ] `npm run build` succeeds with no TypeScript errors
-- [ ] `npm test` passes all unit and integration tests
-- [ ] Plugin installs correctly via `npm link` or direct path in Claude Code settings
-- [ ] Manual testing confirms Stop hook blocks incomplete tasks
-- [ ] Manual testing confirms mid-task feedback is preserved
-- [ ] Performance: Stop hook completes in <5 seconds for typical cases
+- [ ] `npm test` passes all unit tests
+- [ ] `npm run test:e2e` passes all e2e/integration tests
+- [ ] Plugin installs correctly via `npm link` (verified by e2e test)
+- [ ] E2E test confirms Stop hook blocks incomplete tasks (mocked judge)
+- [ ] E2E test confirms mid-task feedback is preserved in ledger
+- [ ] Performance: Stop hook completes in <5 seconds (verified by test timeout)
 
 ## What We're NOT Doing
 

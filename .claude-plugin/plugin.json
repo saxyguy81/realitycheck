@@ -1,0 +1,13 @@
+{
+  "name": "realitycheck",
+  "version": "0.1.0",
+  "description": "Quality gate plugin that ensures Claude Code completes tasks fully before stopping",
+  "author": {
+    "name": "saxyguy81",
+    "url": "https://github.com/saxyguy81"
+  },
+  "repository": "https://github.com/saxyguy81/realitycheck",
+  "license": "MIT",
+  "keywords": ["quality", "testing", "completion", "hooks", "judge"],
+  "hooks": "./hooks/hooks.json"
+}

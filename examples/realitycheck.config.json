@@ -1,0 +1,27 @@
+{
+  "judge": {
+    "model": "opus",
+    "timeout": 30000,
+    "maxTokens": 4096
+  },
+  "limits": {
+    "maxConsecutiveFailures": 20,
+    "maxTotalAttempts": 50,
+    "noProgressThreshold": 5
+  },
+  "storage": {
+    "basePath": ".claude/realitycheck"
+  },
+  "git": {
+    "enabled": true,
+    "snapshotDirtyFiles": true
+  },
+  "performance": {
+    "skipJudgeIfDeterministicPass": true,
+    "cacheJudgeResults": true,
+    "parallelFingerprinting": true
+  },
+  "debug": {
+    "verbose": false
+  }
+}

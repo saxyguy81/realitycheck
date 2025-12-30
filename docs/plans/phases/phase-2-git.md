@@ -122,14 +122,15 @@ Use temp directories with `fs.mkdtempSync()` for isolation.
 ## Verification Criteria
 
 ### Automated
-- [ ] `npm run build` succeeds
-- [ ] `npm test -- src/git` passes all git tests
+- [x] `npm run build` succeeds
+- [x] `npm test -- src/git` passes all git tests
 
-### Manual
-- [ ] In a git repo: `computeFingerprint()` returns consistent hash
-- [ ] Modify a file, call `computeFingerprint()` again - hash changes
-- [ ] `createBaseline()` copies dirty files to snapshot directory
-- [ ] In a non-git directory: methods degrade gracefully (no errors)
+### E2E Tests (No Manual Verification)
+All verification automated in `src/git/index.test.ts`:
+- [x] In git repo: computeFingerprint() returns consistent hash
+- [x] Modify a file, call computeFingerprint() again - hash changes
+- [x] createBaseline() copies dirty files to snapshot directory
+- [x] In non-git directory: methods degrade gracefully (no errors)
 
 ## Implementation Notes
 

@@ -1,0 +1,4 @@
+{"timestamp":"2025-01-01T00:00:00Z","message":{"role":"user","content":[{"type":"text","text":"Create a hello world function"}]}}
+{"timestamp":"2025-01-01T00:00:10Z","message":{"role":"assistant","content":[{"type":"text","text":"I'll create that for you."},{"type":"tool_use","id":"toolu_01","name":"Write","input":{"path":"hello.ts","content":"export function hello() { return 'Hello'; }"}}]}}
+{"timestamp":"2025-01-01T00:00:15Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_01","content":"File written"}]}}
+{"timestamp":"2025-01-01T00:00:20Z","message":{"role":"assistant","content":[{"type":"text","text":"Done! I created hello.ts with the function."}]}}

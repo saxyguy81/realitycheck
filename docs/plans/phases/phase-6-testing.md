@@ -234,12 +234,51 @@ Test cases:
 - Returns block with missing items on failure
 - Records stop attempt in ledger
 
-### 9. Integration Test Placeholder
+### 9. E2E Tests (Consolidated from Phases 3-5)
+
+These tests replace all manual verification from previous phases.
+
+**File**: `src/tests/e2e/hooks.test.ts` (from Phase 3)
+```typescript
+describe('Hook E2E Tests', () => {
+  // Test CLI stdin/stdout handling
+  it('UserPromptSubmit creates ledger when given valid JSON via stdin');
+  it('PostToolUse with Bash tool records fingerprint');
+  it('SessionStart after clear shows preserved directives');
+  it('Stop hook returns approve with mocked judge');
+});
+```
+
+**File**: `src/tests/e2e/judge.test.ts` (from Phase 4)
+```typescript
+describe('Judge E2E Tests', () => {
+  // Mock child_process.spawn for Claude CLI
+  it('handles valid JSON response from subprocess');
+  it('handles timeout gracefully (fail-open)');
+  it('handles malformed output gracefully');
+  it('prompt builder includes all directive types');
+  it('verdict schema rejects invalid structures');
+});
+```
+
+**File**: `src/tests/e2e/installation.test.ts` (from Phase 5)
+```typescript
+describe('Installation E2E Tests', () => {
+  // Use isolated temp directories
+  it('setup.sh runs without errors in temp directory');
+  it('realitycheck binary is executable after build');
+  it('hook config files are valid JSON matching schema');
+  it('install-to-project.sh copies hooks to target directory');
+  it('example configs match expected structure');
+});
+```
+
+### 10. Integration Test Placeholder (Future - Agent SDK)
 
 **File**: `src/tests/integration/realitycheck.integration.test.ts`
 
 ```typescript
-import { describe, it, expect } from 'vitest';
+import { describe, it } from 'vitest';
 
 describe('RealityCheck Integration Tests', () => {
   describe('End-to-End Scenarios', () => {
@@ -260,7 +299,23 @@ describe('RealityCheck Integration Tests', () => {
 
 These require Agent SDK setup and are marked as future work.
 
-### 10. Update package.json
+### 11. E2E Test Config
+
+**File**: `vitest.e2e.config.ts`
+```typescript
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['src/tests/e2e/**/*.test.ts'],
+    testTimeout: 30000,
+  },
+});
+```
+
+### 12. Update package.json
 
 Ensure test scripts:
 ```json
@@ -268,6 +323,7 @@ Ensure test scripts:
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:coverage": "vitest run --coverage"
   }
@@ -276,15 +332,18 @@ Ensure test scripts:
 
 ## Verification Criteria
 
-### Automated
+### Automated (All Tests Must Pass)
 - [ ] `npm test` passes all unit tests
+- [ ] `npm run test:e2e` passes all e2e tests (hooks, judge, installation)
 - [ ] `npm run test:coverage` shows >80% coverage for core modules
 - [ ] No test flakiness (run 3 times)
 
-### Manual
-- [ ] Tests correctly use temp directories (no pollution)
-- [ ] Mocked subprocess calls don't require real Claude CLI
-- [ ] Test fixtures are realistic
+### E2E Test Requirements (No Manual Verification)
+- [ ] Hook e2e tests pass (Phase 3 verification)
+- [ ] Judge e2e tests pass (Phase 4 verification)
+- [ ] Installation e2e tests pass (Phase 5 verification)
+- [ ] All tests use temp directories (no pollution)
+- [ ] Subprocess calls are mocked (no real Claude CLI)
 
 ## Implementation Notes
 
@@ -327,15 +386,19 @@ src/
     │   └── incomplete-transcript.jsonl
     ├── utils/
     │   └── mockHookInput.ts
+    ├── e2e/
+    │   ├── hooks.test.ts          # Phase 3 verification
+    │   ├── judge.test.ts          # Phase 4 verification
+    │   └── installation.test.ts   # Phase 5 verification
     └── integration/
-        └── realitycheck.integration.test.ts
+        └── realitycheck.integration.test.ts  # Future: Agent SDK
 ```
 
 ## After Completion
 
 RealityCheck implementation is complete!
 
-Final verification:
+Final verification (all automated):
 1. `npm run check` (typecheck + lint + test)
 2. `npm run build`
-3. Manual test in a real project with Claude Code
+3. `npm run test:e2e` (installation and integration tests)

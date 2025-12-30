@@ -295,15 +295,17 @@ Remove `.claude/settings.local.json` from your projects.
 ## Verification Criteria
 
 ### Automated
-- [ ] `npm run build` succeeds
-- [ ] `npm link` succeeds
-- [ ] `which realitycheck` returns a path
+- [x] `npm run build` succeeds
+- [x] `npm link` succeeds
+- [x] `which realitycheck` returns a path
 
-### Manual
-- [ ] `scripts/setup.sh` runs without errors
-- [ ] After setup, `realitycheck` command is available
-- [ ] Hook configuration can be copied to a test project
-- [ ] Starting Claude Code in test project shows no hook errors
+### E2E Tests (Phase 6)
+All manual verification must be automated. Add these to `src/tests/e2e/installation.test.ts`:
+- [ ] Setup script runs without errors in isolated temp directory
+- [ ] After setup, realitycheck binary is executable
+- [ ] Hook configuration files are valid JSON and match expected schema
+- [ ] install-to-project.sh correctly copies hooks to target directory
+- [ ] Hooks can be loaded by Claude Code's hook system (mock validation)
 
 ## Implementation Notes
 

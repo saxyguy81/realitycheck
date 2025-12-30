@@ -145,16 +145,17 @@ export const AcceptanceCriterionSchema = z.object({
 export type AcceptanceCriterion = z.infer<typeof AcceptanceCriterionSchema>;
 
 /**
- * Verdict from the judge on a stop attempt
+ * Verdict status for recording stop attempts
+ * Note: This is the simple status enum, not the full judge verdict object
  */
-export const JudgeVerdictSchema = z.enum([
+export const VerdictStatusSchema = z.enum([
   'complete',    // Task is fully done
   'incomplete',  // Task needs more work
   'blocked',     // Task cannot proceed (needs user input)
   'error',       // Judge encountered an error
 ]);
 
-export type JudgeVerdict = z.infer<typeof JudgeVerdictSchema>;
+export type VerdictStatus = z.infer<typeof VerdictStatusSchema>;
 
 /**
  * Record of a stop attempt and judge evaluation
@@ -162,7 +163,7 @@ export type JudgeVerdict = z.infer<typeof JudgeVerdictSchema>;
 export const StopAttemptSchema = z.object({
   id: z.string().uuid(),
   timestamp: z.string().datetime(),
-  verdict: JudgeVerdictSchema,
+  verdict: VerdictStatusSchema,
   reason: z.string(),
   fingerprintBefore: z.string().optional(),
   fingerprintAfter: z.string().optional(),
