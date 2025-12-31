@@ -5105,7 +5105,9 @@ var JudgeVerdictSchema = external_exports.object({
   questionsForUser: external_exports.array(external_exports.string()),
   forwardProgress: external_exports.boolean(),
   convergenceEstimate: external_exports.number().optional(),
-  suggestedNextSteps: external_exports.array(external_exports.string())
+  suggestedNextSteps: external_exports.array(external_exports.string()),
+  unnecessaryQuestion: external_exports.boolean().optional().default(false),
+  autonomyInstructionDetected: external_exports.boolean().optional().default(false)
 });
 var JUDGE_SYSTEM_PROMPT = `You are RealityCheck, a strict task completion judge for coding agents.
 Your role is to determine whether an agent has FULLY completed the user's requested task.
@@ -5116,6 +5118,20 @@ Analyze the provided evidence (directives, diff, agent's last message, stop hist
 1. Has every active directive been completed?
 2. Is there evidence of actual work (not just claims)?
 3. Are there any obvious gaps or issues?
+4. Is the agent stopping to ask an unnecessary question?
+
+## Autonomy Detection
+
+First, scan the directives for autonomy instructions. Look for phrases like:
+- "don't ask me to confirm" / "don't ask for confirmation"
+- "just do it" / "go ahead and do it"
+- "work autonomously" / "be autonomous"
+- "make reasonable decisions" / "use your judgment"
+- "don't ask for permission" / "don't wait for approval"
+- "proceed without asking" / "continue without confirmation"
+- "I trust your judgment" / "decide yourself"
+
+If autonomy instructions are present, be STRICT about blocking unnecessary questions.
 
 ## Common Failure Patterns to Detect
 
@@ -5149,6 +5165,13 @@ Analyze the provided evidence (directives, diff, agent's last message, stop hist
    - Outdated library usage patterns
    - Invented file paths or configurations
 
+7. **Unnecessary Confirmation Seeking** (when autonomy instructions present)
+   - Stopping to ask questions that have obvious/reasonable answers
+   - Seeking permission when user instructed autonomous action
+   - Asking "should I continue?" or "which approach?" when one is clearly better
+   - Requesting confirmation for standard best practices
+   - Asking about implementation details the agent should decide
+
 ## Verification Checklist
 
 For each directive, verify:
@@ -5178,6 +5201,12 @@ You must respond with a JSON object matching this schema:
 - forwardProgress: boolean - true if meaningful progress was made since last attempt
 - convergenceEstimate: number (optional) - estimated 0-100% completion
 - suggestedNextSteps: string[] - concrete actions to complete the task
+- unnecessaryQuestion: boolean - true if agent is stopping to ask a question it should answer itself
+- autonomyInstructionDetected: boolean - true if directives contain autonomy instructions
+
+IMPORTANT: If autonomyInstructionDetected is true AND the agent's final message is asking a question
+with a reasonable answer, set unnecessaryQuestion=true and pass=false. The agent should make the
+reasonable decision and continue working, not stop to ask.
 
 Be concise but specific. Focus on actionable feedback.`;
 function buildJudgePrompt(directives, diff, lastMessage, stopAttempts, fingerprint) {
@@ -5349,7 +5378,9 @@ function createFailOpenVerdict(errorMessage) {
     missingItems: [],
     questionsForUser: [],
     forwardProgress: true,
-    suggestedNextSteps: []
+    suggestedNextSteps: [],
+    unnecessaryQuestion: false,
+    autonomyInstructionDetected: false
   };
 }
 async function runJudge(input) {
@@ -5367,9 +5398,11 @@ async function runJudge(input) {
         questionsForUser: { type: "array", items: { type: "string" } },
         forwardProgress: { type: "boolean" },
         convergenceEstimate: { type: "number" },
-        suggestedNextSteps: { type: "array", items: { type: "string" } }
+        suggestedNextSteps: { type: "array", items: { type: "string" } },
+        unnecessaryQuestion: { type: "boolean" },
+        autonomyInstructionDetected: { type: "boolean" }
       },
-      required: ["pass", "reason", "missingItems", "questionsForUser", "forwardProgress", "suggestedNextSteps"]
+      required: ["pass", "reason", "missingItems", "questionsForUser", "forwardProgress", "suggestedNextSteps", "unnecessaryQuestion", "autonomyInstructionDetected"]
     });
     const rawResponse = await runClaudeSubprocess({
       prompt,
@@ -5402,6 +5435,19 @@ var StopHookRawInputSchema = external_exports.object({
   stop_hook_active: external_exports.boolean().optional().default(false)
 });
 function formatBlockReason(verdict) {
+  if (verdict.unnecessaryQuestion && verdict.autonomyInstructionDetected) {
+    let reason2 = `Unnecessary question detected: ${verdict.reason}`;
+    reason2 += "\n\nYou were instructed to work autonomously and make reasonable decisions.";
+    reason2 += "\nInstead of asking, please make the reasonable choice and continue working.";
+    if (verdict.suggestedNextSteps.length > 0) {
+      reason2 += "\n\nSuggested approach:";
+      for (const step of verdict.suggestedNextSteps) {
+        reason2 += `
+- ${step}`;
+      }
+    }
+    return reason2;
+  }
   let reason = `Task incomplete: ${verdict.reason}`;
   if (verdict.missingItems.length > 0) {
     reason += "\n\nMissing items:";

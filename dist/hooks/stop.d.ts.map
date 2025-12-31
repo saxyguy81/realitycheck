@@ -1,1 +1,1 @@
-{"version":3,"file":"stop.d.ts","sourceRoot":"","sources":["../../src/hooks/stop.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAC;AA6CjD;;;;;;;;;GASG;AACH,wBAAsB,UAAU,CAC9B,QAAQ,EAAE,OAAO,GAChB,OAAO,CAAC,YAAY,GAAG,SAAS,CAAC,CAyGnC"}
+{"version":3,"file":"stop.d.ts","sourceRoot":"","sources":["../../src/hooks/stop.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,YAAY,EAAE,MAAM,mBAAmB,CAAC;AA6DjD;;;;;;;;;GASG;AACH,wBAAsB,UAAU,CAC9B,QAAQ,EAAE,OAAO,GAChB,OAAO,CAAC,YAAY,GAAG,SAAS,CAAC,CAyGnC"}

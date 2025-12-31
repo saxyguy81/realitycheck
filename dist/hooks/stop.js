@@ -18,6 +18,19 @@ const StopHookRawInputSchema = z.object({
  * Format the block response with structured feedback
  */
 function formatBlockReason(verdict) {
+    // Special handling for unnecessary question detection
+    if (verdict.unnecessaryQuestion && verdict.autonomyInstructionDetected) {
+        let reason = `Unnecessary question detected: ${verdict.reason}`;
+        reason += '\n\nYou were instructed to work autonomously and make reasonable decisions.';
+        reason += '\nInstead of asking, please make the reasonable choice and continue working.';
+        if (verdict.suggestedNextSteps.length > 0) {
+            reason += '\n\nSuggested approach:';
+            for (const step of verdict.suggestedNextSteps) {
+                reason += `\n- ${step}`;
+            }
+        }
+        return reason;
+    }
     let reason = `Task incomplete: ${verdict.reason}`;
     if (verdict.missingItems.length > 0) {
         reason += '\n\nMissing items:';

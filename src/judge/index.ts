@@ -20,6 +20,8 @@ export const JudgeVerdictSchema = z.object({
   forwardProgress: z.boolean(),
   convergenceEstimate: z.number().optional(),
   suggestedNextSteps: z.array(z.string()),
+  unnecessaryQuestion: z.boolean().optional().default(false),
+  autonomyInstructionDetected: z.boolean().optional().default(false),
 });
 
 export type JudgeVerdict = z.infer<typeof JudgeVerdictSchema>;
@@ -51,6 +53,20 @@ Analyze the provided evidence (directives, diff, agent's last message, stop hist
 1. Has every active directive been completed?
 2. Is there evidence of actual work (not just claims)?
 3. Are there any obvious gaps or issues?
+4. Is the agent stopping to ask an unnecessary question?
+
+## Autonomy Detection
+
+First, scan the directives for autonomy instructions. Look for phrases like:
+- "don't ask me to confirm" / "don't ask for confirmation"
+- "just do it" / "go ahead and do it"
+- "work autonomously" / "be autonomous"
+- "make reasonable decisions" / "use your judgment"
+- "don't ask for permission" / "don't wait for approval"
+- "proceed without asking" / "continue without confirmation"
+- "I trust your judgment" / "decide yourself"
+
+If autonomy instructions are present, be STRICT about blocking unnecessary questions.
 
 ## Common Failure Patterns to Detect
 
@@ -84,6 +100,13 @@ Analyze the provided evidence (directives, diff, agent's last message, stop hist
    - Outdated library usage patterns
    - Invented file paths or configurations
 
+7. **Unnecessary Confirmation Seeking** (when autonomy instructions present)
+   - Stopping to ask questions that have obvious/reasonable answers
+   - Seeking permission when user instructed autonomous action
+   - Asking "should I continue?" or "which approach?" when one is clearly better
+   - Requesting confirmation for standard best practices
+   - Asking about implementation details the agent should decide
+
 ## Verification Checklist
 
 For each directive, verify:
@@ -113,6 +136,12 @@ You must respond with a JSON object matching this schema:
 - forwardProgress: boolean - true if meaningful progress was made since last attempt
 - convergenceEstimate: number (optional) - estimated 0-100% completion
 - suggestedNextSteps: string[] - concrete actions to complete the task
+- unnecessaryQuestion: boolean - true if agent is stopping to ask a question it should answer itself
+- autonomyInstructionDetected: boolean - true if directives contain autonomy instructions
+
+IMPORTANT: If autonomyInstructionDetected is true AND the agent's final message is asking a question
+with a reasonable answer, set unnecessaryQuestion=true and pass=false. The agent should make the
+reasonable decision and continue working, not stop to ask.
 
 Be concise but specific. Focus on actionable feedback.`;
 
@@ -349,6 +378,8 @@ function createFailOpenVerdict(errorMessage: string): JudgeVerdict {
     questionsForUser: [],
     forwardProgress: true,
     suggestedNextSteps: [],
+    unnecessaryQuestion: false,
+    autonomyInstructionDetected: false,
   };
 }
 
@@ -382,8 +413,10 @@ export async function runJudge(input: JudgeInput): Promise<JudgeVerdict> {
         forwardProgress: { type: 'boolean' },
         convergenceEstimate: { type: 'number' },
         suggestedNextSteps: { type: 'array', items: { type: 'string' } },
+        unnecessaryQuestion: { type: 'boolean' },
+        autonomyInstructionDetected: { type: 'boolean' },
       },
-      required: ['pass', 'reason', 'missingItems', 'questionsForUser', 'forwardProgress', 'suggestedNextSteps'],
+      required: ['pass', 'reason', 'missingItems', 'questionsForUser', 'forwardProgress', 'suggestedNextSteps', 'unnecessaryQuestion', 'autonomyInstructionDetected'],
     });
 
     // Run the Claude subprocess

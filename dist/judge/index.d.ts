@@ -14,6 +14,8 @@ export declare const JudgeVerdictSchema: z.ZodObject<{
     forwardProgress: z.ZodBoolean;
     convergenceEstimate: z.ZodOptional<z.ZodNumber>;
     suggestedNextSteps: z.ZodArray<z.ZodString, "many">;
+    unnecessaryQuestion: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
+    autonomyInstructionDetected: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
     reason: string;
     pass: boolean;
@@ -21,6 +23,8 @@ export declare const JudgeVerdictSchema: z.ZodObject<{
     questionsForUser: string[];
     forwardProgress: boolean;
     suggestedNextSteps: string[];
+    unnecessaryQuestion: boolean;
+    autonomyInstructionDetected: boolean;
     convergenceEstimate?: number | undefined;
 }, {
     reason: string;
@@ -30,6 +34,8 @@ export declare const JudgeVerdictSchema: z.ZodObject<{
     forwardProgress: boolean;
     suggestedNextSteps: string[];
     convergenceEstimate?: number | undefined;
+    unnecessaryQuestion?: boolean | undefined;
+    autonomyInstructionDetected?: boolean | undefined;
 }>;
 export type JudgeVerdict = z.infer<typeof JudgeVerdictSchema>;
 export interface JudgeInput {
